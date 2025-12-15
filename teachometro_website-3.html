@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Teachómetro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body { font-family: Arial, Helvetica, sans-serif; background:#f4f6f8; margin:0; padding:20px; }
+    .container { max-width:920px; margin:auto; background:#fff; padding:26px; border-radius:14px; box-shadow:0 6px 14px rgba(0,0,0,.1);}    
+    h1 { text-align:center; color:#2c3e50; }
+    h2 { margin-top:28px; color:#34495e; }
+    p.note { text-align:center; font-size:14px; color:#555; }
+    label { display:block; margin-top:14px; font-weight:bold; }
+    input[type="text"], input[type="email"], input[type="number"], textarea, select { width:100%; padding:10px; margin-top:6px; border-radius:8px; border:1px solid #ccc; font-size:14px; }
+    textarea { resize:vertical; }
+    .awards { background:#eef7ff; padding:18px; border-radius:12px; margin-top:22px; }
+    .submit { margin-top:28px; width:100%; padding:14px; border:none; border-radius:10px; background:#3498db; color:#fff; font-size:16px; cursor:pointer; }
+    .submit:hover { background:#2d82c7; }
+    .success { margin-top:18px; color:#2ecc71; text-align:center; font-weight:bold; display:none; }
+    .preview { margin-top:18px; background:#fafafa; border:1px dashed #ccc; padding:12px; border-radius:10px; font-size:14px; }
+    footer { margin-top:28px; text-align:center; font-size:13px; color:#777; }
+    .req { color:#c0392b; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📊 Teachómetro</h1>
+    <p class="note">Non-anonymous feedback. Please use your school email and keep comments respectful and school-appropriate.</p>
+
+    <h2>Student Information</h2>
+    <label>School Email <span class="req">*</span></label>
+    <input type="email" id="email" placeholder="name@school.edu" />
+
+    <label>Student Name <span class="req">*</span></label>
+    <input type="text" id="student" placeholder="Your full name" />
+
+    <label>Teacher's Full Name <span class="req">*</span></label>
+    <input type="text" id="teacher" placeholder="Type the teacher's name" />
+
+    <h2>Ratings</h2>
+    <label>How clearly does your teacher explain the topics? (1–5)</label>
+    <input type="number" id="clarity" min="1" max="5" />
+
+    <label>How easy is it to understand their class day by day? (1–5)</label>
+    <input type="number" id="ease" min="1" max="5" />
+
+    <h2>Written Feedback</h2>
+    <label>What do you like most about how your favorite teacher teaches?</label>
+    <textarea id="like" rows="3"></textarea>
+
+    <label>What does your teacher do in class that motivates you or helps you learn better?</label>
+    <textarea id="motivate" rows="3"></textarea>
+
+    <label>What part of their class do you think could be improved?</label>
+    <textarea id="improvePart" rows="3"></textarea>
+
+    <label>What would you change about their way of explaining?</label>
+    <textarea id="changeExplain" rows="3"></textarea>
+
+    <label>What positive comment would you like to leave them?</label>
+    <textarea id="positive" rows="3"></textarea>
+
+    <label>What would you improve about the class if you could change just one thing?</label>
+    <textarea id="oneThing" rows="3"></textarea>
+
+    <div class="awards">
+      <h2>🏆 Teacher Awards</h2>
+      <label>Most Strict Teacher</label>
+      <input type="text" id="strict" placeholder="Type a teacher's name" />
+
+      <label>Most Friendly Teacher</label>
+      <input type="text" id="friendly" placeholder="Type a teacher's name" />
+
+      <label>Best Looking Teacher</label>
+      <input type="text" id="looking" placeholder="Type a teacher's name" />
+
+      <label>Funniest Teacher</label>
+      <input type="text" id="funny" placeholder="Type a teacher's name" />
+
+      <label>Best at Explaining</label>
+      <input type="text" id="bestExplain" placeholder="Type a teacher's name" />
+
+      <label>Coolest Teacher</label>
+      <input type="text" id="coolest" placeholder="Type a teacher's name" />
+    </div>
+
+    <button class="submit" onclick="submitForm()">Submit</button>
+    <div class="success" id="ok">Submitted! Your feedback was sent with your school email ✔️</div>
+    <div class="preview" id="preview" style="display:none"></div>
+
+    <footer>Teachómetro • Verified Student Feedback • Respect First</footer>
+  </div>
+
+  <script>
+    function submitForm(){
+      const email = document.getElementById('email').value.trim();
+      const student = document.getElementById('student').value.trim();
+      const teacher = document.getElementById('teacher').value.trim();
+      if(!email || !student || !teacher){ alert('Please complete all required fields.'); return; }
+
+      const payload = {
+        email, student, teacher,
+        clarity: document.getElementById('clarity').value,
+        ease: document.getElementById('ease').value,
+        like: document.getElementById('like').value,
+        motivate: document.getElementById('motivate').value,
+        improvePart: document.getElementById('improvePart').value,
+        changeExplain: document.getElementById('changeExplain').value,
+        positive: document.getElementById('positive').value,
+        oneThing: document.getElementById('oneThing').value,
+        awards: {
+          strict: document.getElementById('strict').value,
+          friendly: document.getElementById('friendly').value,
+          looking: document.getElementById('looking').value,
+          funny: document.getElementById('funny').value,
+          bestExplain: document.getElementById('bestExplain').value,
+          coolest: document.getElementById('coolest').value
+        },
+        time: new Date().toLocaleString()
+      };
+
+      let store = JSON.parse(localStorage.getItem('teachometro_verified')) || [];
+      store.push(payload);
+      localStorage.setItem('teachometro_verified', JSON.stringify(store));
+
+      document.getElementById('ok').style.display = 'block';
+      const p = document.getElementById('preview');
+      p.style.display = 'block';
+      p.innerHTML = `<strong>Sent by:</strong> ${student} (${email})<br/><strong>Teacher:</strong> ${teacher}<br/><strong>Time:</strong> ${payload.time}`;
+    }
+  </script>
+</body>
+</html>
